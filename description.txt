@@ -1,3 +1,5 @@
 This mod modifies the search function of the duplication menu (in Journey Mode) to allow you to search for items by mod (by placing a '@' before the mod name), or by item id ("id:nnnn" where n is the id number).
 It also lets you search multiple things at once by separating them with the pipe character ('|').
 Example: "@magicstorage | chair" to search for items from Magic Storage and chairs.
+
+It also adds a fuzzy search (e.g. 'w' will match 'wooden sword', 'chiar' will match 'chair') which can be disabled or adjusted in the config file.
