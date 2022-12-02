@@ -11,10 +11,11 @@ namespace AdvancedJourneySearch
 {
 	public class AdvancedJourneySearch : Mod {
 		private FieldInfo _searchField;
-		private Regex _modSearchRegex = new(@"@(\w)+", RegexOptions.Compiled);
+		private Regex _modSearchRegex;
 
 		public override void Load() {
 			_searchField = typeof(ItemFilters.BySearch).GetField("_search", BindingFlags.Instance | BindingFlags.NonPublic);
+			_modSearchRegex = new Regex(@"@(\w)+", RegexOptions.Compiled);
 
 			if (_searchField is null)
 				throw new Exception("Failed to find _search field in ItemFilters.BySearch");
@@ -38,22 +39,25 @@ namespace AdvancedJourneySearch
 			
 			// Split searches by pipe and trim whitespace
 			string[] searches = search.Split('|');
-			for (int i = 0; i < searches.Length; i++)
-				searches[i] = searches[i].Trim();
 
 			// Search for the search string in the tooltip lines
 			foreach (string s in searches) {
+				string modifiedSearch = s;
+				
 				// Check if search contains @modname
 				if (s.Contains('@')) {
-					MatchCollection matches = _modSearchRegex.Matches(s);
-					foreach (Match match in matches) {
-						if (match.Value[1..] == entry.ModItem.Mod.Name)
-							return orig(self, entry);
+					Match match = _modSearchRegex.Match(modifiedSearch);
+					
+					if (match.Success) {
+						if (entry.ModItem is null || !SimpleSearch(match.Value[1..], entry.ModItem.Mod.Name))
+							return false;
 					}
+					modifiedSearch = _modSearchRegex.Replace(modifiedSearch, "");
 				}
-				
+
+				modifiedSearch = modifiedSearch.Trim();
 				for (int i = 0; i < numLines; i++) {
-					if (SimpleSearch(s, tooltipLines[i]))
+					if (SimpleSearch(modifiedSearch, tooltipLines[i]))
 						return true;
 				}
 			}
