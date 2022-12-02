@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.GameContent.Creative;
 using OnItemFilters = On.Terraria.GameContent.Creative.ItemFilters;
@@ -11,11 +11,9 @@ namespace AdvancedJourneySearch
 {
 	public class AdvancedJourneySearch : Mod {
 		private FieldInfo _searchField;
-		private Regex _modSearchRegex;
 
 		public override void Load() {
 			_searchField = typeof(ItemFilters.BySearch).GetField("_search", BindingFlags.Instance | BindingFlags.NonPublic);
-			_modSearchRegex = new Regex(@"@(\w)*", RegexOptions.Compiled);
 
 			if (_searchField is null)
 				throw new Exception("Failed to find _search field in ItemFilters.BySearch");
@@ -28,7 +26,7 @@ namespace AdvancedJourneySearch
 			bool[] unusedPrefixLine = new bool[30], unusedBadPrefixLine = new bool[30];
 			string[] unusedTooltipNames = new string[30];
 
-			string search = (string) _searchField.GetValue(self)!;
+			string searchValue = (string) _searchField.GetValue(self)!;
 			int numLines = 1;
 			string[] tooltipLines = new string[30];
 
@@ -38,36 +36,15 @@ namespace AdvancedJourneySearch
 				unusedBadPrefixLine, unusedTooltipNames);
 			
 			// Split searches by pipe and trim whitespace
-			string[] searches = search.Split('|');
+			List<Search> searches = searchValue.Split('|').Select(x => new Search(x)).ToList();
 
 			// Search for the search string in the tooltip lines
-			foreach (string s in searches) {
-				string modifiedSearch = s;
-				
-				// Check if search contains @modname
-				if (s.Contains('@')) {
-					Match match = _modSearchRegex.Match(modifiedSearch);
-
-					string modName = entry.ModItem?.Mod.Name ?? "terraria";
-					if (match.Success) {
-						if (!SimpleSearch(match.Value[1..], modName))
-							return false;
-					}
-					modifiedSearch = _modSearchRegex.Replace(modifiedSearch, "");
-				}
-
-				modifiedSearch = modifiedSearch.Trim();
-				for (int i = 0; i < numLines; i++) {
-					if (SimpleSearch(modifiedSearch, tooltipLines[i]))
-						return true;
-				}
+			foreach (Search search in searches) {
+				if (search.FitsFilter(entry, tooltipLines))
+					return true;
 			}
 
 			return false;
-		}
-
-		private bool SimpleSearch(string search, string text) {
-			return text.ToLower().IndexOf(search, StringComparison.OrdinalIgnoreCase) != -1;
 		}
 	}
 }
