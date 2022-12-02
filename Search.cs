@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using FuzzySharp;
+using FuzzySharp.PreProcess;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace AdvancedJourneySearch; 
 
@@ -51,7 +54,10 @@ public class Search {
 			if (line is null)
 				continue;
 
-			if (SimpleSearch(SearchCriteria, line))
+			if (Config.Instance.EnableFuzzySearch && FuzzySearch(SearchCriteria, line))
+				return true;
+			
+			if (!Config.Instance.EnableFuzzySearch && SimpleSearch(SearchCriteria, line))
 				return true;
 		}
 		
@@ -60,5 +66,15 @@ public class Search {
 
 	private static bool SimpleSearch(string search, string text) {
 		return text.ToLower().IndexOf(search, StringComparison.OrdinalIgnoreCase) != -1;
+	}
+
+	private static bool FuzzySearch(string search, string text) {
+		if (string.IsNullOrWhiteSpace(search))
+			return true;
+		
+		// Use Levenshtein distance to determine if the search term is close enough to the text
+		int confidence = Fuzz.PartialTokenSetRatio(search.ToLower(), text.ToLower(), PreprocessMode.None);
+
+		return confidence >= Config.Instance.FuzzyThreshold;
 	}
 }
