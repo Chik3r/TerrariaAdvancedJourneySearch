@@ -15,7 +15,7 @@ namespace AdvancedJourneySearch
 
 		public override void Load() {
 			_searchField = typeof(ItemFilters.BySearch).GetField("_search", BindingFlags.Instance | BindingFlags.NonPublic);
-			_modSearchRegex = new Regex(@"@(\w)+", RegexOptions.Compiled);
+			_modSearchRegex = new Regex(@"@(\w)*", RegexOptions.Compiled);
 
 			if (_searchField is null)
 				throw new Exception("Failed to find _search field in ItemFilters.BySearch");
@@ -47,9 +47,10 @@ namespace AdvancedJourneySearch
 				// Check if search contains @modname
 				if (s.Contains('@')) {
 					Match match = _modSearchRegex.Match(modifiedSearch);
-					
+
+					string modName = entry.ModItem?.Mod.Name ?? "terraria";
 					if (match.Success) {
-						if (entry.ModItem is null || !SimpleSearch(match.Value[1..], entry.ModItem.Mod.Name))
+						if (!SimpleSearch(match.Value[1..], modName))
 							return false;
 					}
 					modifiedSearch = _modSearchRegex.Replace(modifiedSearch, "");
