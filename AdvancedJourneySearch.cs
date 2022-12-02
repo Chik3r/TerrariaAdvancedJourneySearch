@@ -7,9 +7,9 @@ using Terraria.GameContent.Creative;
 using OnItemFilters = On.Terraria.GameContent.Creative.ItemFilters;
 using Terraria.ModLoader;
 
-namespace AdvancedInfiniteItemsSearch
+namespace AdvancedJourneySearch
 {
-	public class AdvancedInfiniteItemsSearch : Mod {
+	public class AdvancedJourneySearch : Mod {
 		private FieldInfo _searchField;
 		private Regex _modSearchRegex = new(@"@(\w)+", RegexOptions.Compiled);
 
