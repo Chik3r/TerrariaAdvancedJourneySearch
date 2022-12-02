@@ -7,24 +7,32 @@ using Terraria;
 namespace AdvancedJourneySearch; 
 
 public class Search {
-	private static Regex? _modSearchRegex = null;
+	private static readonly Regex ModSearchRegex = new(@"@(\w)*", RegexOptions.Compiled);
+	private static readonly Regex IdSearchRegex = new(@"id:(\d)*", RegexOptions.Compiled);
 	private string SearchCriteria { get; }
 	private string? ModName { get; }
+	private int? Id { get; }
 
 	public Search(string searchCriteria) {
-		_modSearchRegex ??= new Regex(@"@(\w)*", RegexOptions.Compiled);
-		
 		SearchCriteria = searchCriteria.Trim();
 
-		if (!searchCriteria.Contains('@'))
-			return;
-		
-		Match match = _modSearchRegex.Match(searchCriteria);
-		if (match.Success)
-			ModName = match.Value[1..];
+		if (searchCriteria.Contains('@')) {
+			Match match = ModSearchRegex.Match(searchCriteria);
+			if (match.Success)
+				ModName = match.Value[1..];
 
-		SearchCriteria = _modSearchRegex.Replace(SearchCriteria, "");
-		SearchCriteria = SearchCriteria.Trim();
+			SearchCriteria = ModSearchRegex.Replace(SearchCriteria, "");
+			SearchCriteria = SearchCriteria.Trim();
+		}
+
+		if (searchCriteria.Contains(":")) {
+			Match match = IdSearchRegex.Match(SearchCriteria);
+			if (match.Success && int.TryParse(match.Value[3..], out int id))
+				Id = id;
+			
+			SearchCriteria = IdSearchRegex.Replace(SearchCriteria, "");
+			SearchCriteria = SearchCriteria.Trim();
+		}
 	}
 
 	public bool FitsFilter(Item input, IEnumerable<string?> tooltipLines) {
@@ -33,6 +41,10 @@ public class Search {
 			
 			if (!SimpleSearch(ModName, itemModName))
 				return false;
+		}
+
+		if (Id is not null) {
+			return input.type == Id;
 		}
 
 		foreach (string? line in tooltipLines) {
