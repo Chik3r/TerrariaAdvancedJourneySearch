@@ -14,7 +14,7 @@ public class Search {
 	public Search(string searchCriteria) {
 		_modSearchRegex ??= new Regex(@"@(\w)*", RegexOptions.Compiled);
 		
-		SearchCriteria = searchCriteria;
+		SearchCriteria = searchCriteria.Trim();
 
 		if (!searchCriteria.Contains('@'))
 			return;
