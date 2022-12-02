@@ -1,1 +1,3 @@
-Advanced Journey Mode Search is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+This mod modifies the search function of the duplication menu (in Journey Mode) to allow you to search for items by mod (by placing a '@' before the mod name).
+It also lets you search multiple things at once by separating them with the pipe character ('|').
+Example: "@magicstorage | chair" to search for items from Magic Storage and chairs.

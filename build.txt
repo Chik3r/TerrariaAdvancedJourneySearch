@@ -1,3 +1,4 @@
 displayName = Advanced Journey Mode Search
 author = Chik3r
 version = 0.1
+side = Client
