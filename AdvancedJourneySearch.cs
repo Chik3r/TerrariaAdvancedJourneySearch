@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.GameContent.Creative;
-using OnItemFilters = On.Terraria.GameContent.Creative.ItemFilters;
 using Terraria.ModLoader;
 
 namespace AdvancedJourneySearch
@@ -18,10 +17,10 @@ namespace AdvancedJourneySearch
 			if (_searchField is null)
 				throw new Exception("Failed to find _search field in ItemFilters.BySearch");
 
-			OnItemFilters.BySearch.FitsFilter += BySearchOnFitsFilter;
+			On_ItemFilters.BySearch.FitsFilter += BySearchOnFitsFilter;
 		}
 
-		private bool BySearchOnFitsFilter(OnItemFilters.BySearch.orig_FitsFilter orig, ItemFilters.BySearch self, Item entry) {
+		private bool BySearchOnFitsFilter(On_ItemFilters.BySearch.orig_FitsFilter orig, ItemFilters.BySearch self, Item entry) {
 			int unusedYoyoLogo = 0, unusedResearchLine = 0;
 			bool[] unusedPrefixLine = new bool[30], unusedBadPrefixLine = new bool[30];
 			string[] unusedTooltipNames = new string[30];

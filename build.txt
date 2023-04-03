@@ -1,5 +1,6 @@
 displayName = Advanced Journey Mode Search
 author = Chik3r
-version = 1.0
+version = 1.0.1
 side = Client
 dllReferences = FuzzySharp
+homepage = https://github.com/Chik3r/TerrariaAdvancedJourneySearch
