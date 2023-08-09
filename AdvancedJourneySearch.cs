@@ -32,7 +32,7 @@ namespace AdvancedJourneySearch
 			// Get tooltip lines
 			Main.MouseText_DrawItemTooltip_GetLinesInfo(entry, ref unusedYoyoLogo, ref unusedResearchLine, 
 				entry.knockBack, ref numLines, tooltipLines, unusedPrefixLine,
-				unusedBadPrefixLine, unusedTooltipNames);
+				unusedBadPrefixLine, unusedTooltipNames, out int unused);
 			
 			// Split searches by pipe and trim whitespace
 			List<Search> searches = searchValue.Split('|').Select(x => new Search(x)).ToList();

@@ -1,0 +1,15 @@
+Configs: {
+	Config: {
+		DisplayName: Config
+
+		EnableFuzzySearch: {
+			Label: Enable fuzzy search
+			Tooltip: Enable fuzzy search (e.g. 'w' will match 'wooden sword', 'chiar' will match 'chair')
+		}
+
+		FuzzyThreshold: {
+			Label: Fuzzy search threshold
+			Tooltip: The threshold for the fuzzy search. Higher values will make the search stricter, lower values will make it more lenient.
+		}
+	}
+}
